@@ -51,6 +51,17 @@ type PebbleFS struct {
 	fs IFS
 }
 
+func (p *PebbleFS) OpenReadWrite(name string, opts ...pvfs.OpenOption) (pvfs.File, error) {
+	file, err := p.fs.Create(name)
+	if err != nil {
+		return nil, err
+	}
+	for _, opt := range opts {
+		opt.Apply(file)
+	}
+	return file, nil
+}
+
 var _ pvfs.FS = (*PebbleFS)(nil)
 
 // NewPebbleFS creates a new pebble/vfs.FS instance.
